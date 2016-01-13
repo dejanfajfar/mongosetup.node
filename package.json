@@ -1,0 +1,32 @@
+{
+  "name": "mongosetup",
+  "version": "0.0.1",
+  "description": "A promise based mongo db initialization library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dejanfajfar/mongosetup.node.git"
+  },
+  "keywords": [
+    "mongo",
+    "promises",
+    "setup"
+  ],
+  "author": "Dejan Fajfar <dejan@fajfar.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dejanfajfar/mongosetup.node/issues"
+  },
+  "homepage": "https://github.com/dejanfajfar/mongosetup.node#readme",
+  "dependencies": {
+    "check-types": "^5.1.0",
+    "mongodb": "^2.1.4"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  }
+}
