@@ -6,4 +6,4 @@ deploy:
   provider: npm
   api_key: "d330c0d3-142e-4417-adba-041a4cba11cb"
   on:
-    branch: main
+    branch: master
