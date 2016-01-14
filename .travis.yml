@@ -4,7 +4,7 @@ node_js:
   - "5"
 services:
   - mongodb
-before_build:
+before_script:
   - npm version 0.1.$TRAVIS_BUILD_NUMBER
 deploy:
   provider: npm
