@@ -22,6 +22,6 @@ mongoSetup.connectTo("mongo://localhost:27017/demo")
     .then(cp.useCollection("MyCollection"))
     .then(cp.deleteAllDocuments())
     .then(cp.disconnect())
-    .catch(err => console.log(err));
+    .catch(mongoSetup.handleError());
 
 
