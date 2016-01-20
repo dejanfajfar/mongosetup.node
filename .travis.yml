@@ -5,6 +5,9 @@ os:
 node_js:
   - "4"
   - "5"
+matrix:
+  allow_failures:
+    - os: osx
 services:
   - mongodb
 before_install:
