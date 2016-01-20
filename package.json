@@ -1,6 +1,6 @@
 {
   "name": "mongosetup",
-  "version": "0.2.0",
+  "version": "0.1.1",
   "description": "A promise based mongo db initialization library",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,11 @@
   "keywords": [
     "mongo",
     "promises",
-    "setup"
+    "setup",
+    "mongodb",
+    "cli",
+    "shell",
+    "tool"
   ],
   "author": "Dejan Fajfar <dejan@fajfar.com>",
   "license": "ISC",
