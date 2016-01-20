@@ -7,7 +7,9 @@ describe("databaseManager", () => {
     describe("connectTo", () => {
 
         it("connectionData must be an object", () => {
-            assert.doesNotThrow(() => { mongo_setup.connectTo({}) });
+            assert.doesNotThrow(() => { mongo_setup.connectTo({
+                connectionString : "connection_string"
+            }) });
         });
 
         it("If connectionData is not an Object the an Error is thrown", () => {
