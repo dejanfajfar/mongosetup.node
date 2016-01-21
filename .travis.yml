@@ -13,4 +13,4 @@ deploy:
   provider: npm
   email: "dejan@fajfar.com"
   api_key: "$npm_key"
-  on: main
+  on: master
