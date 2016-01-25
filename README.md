@@ -7,13 +7,15 @@
 
 A nodeJs module to write promises based __mongodb__ initialization/update scripts with a nice _cli_ output
 
-![sample output](https://github.com/dejanfajfar/mongosetup.node/blob/master/misc/output.png)
+![sample output](https://raw.githubusercontent.com/dejanfajfar/mongosetup.node/master/misc/output.png)
 
 # Why?
 
 To create a easy way to initialize your mongodb from scratch. 
  
 Create __collections__, __indexes__ and insert initialization data with an easy _fluent_ interface.
+
+If the shiny fluent interface did not convince you then another great point in favor is the ability to run scripts __without a local mongo installation__.
 
 # How?
 
