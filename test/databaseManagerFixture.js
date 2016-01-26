@@ -12,10 +12,22 @@ describe("databaseManager", () => {
             }) });
         });
 
-        it("If connectionData is not an Object the an Error is thrown", () => {
+        it("Connection data can not be a string", () => {
             assert.throws(
                 () => { mongo_setup.connectTo("") },
                 "connectionData must be an object");
+        });
+
+        it("Connection data can not be a number", () => {
+            assert.throws(
+                () => { mongo_setup.connectTo(42) },
+                "connectionData must be an object");
+        });
+
+        it("Connection data can not be undefined", () => {
+            assert.throws(
+                () => { mongo_setup.connectTo(undefined) },
+                "connectTo can not be invoked using undefined");
         });
     });
 });
