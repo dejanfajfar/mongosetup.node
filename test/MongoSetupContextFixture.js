@@ -194,7 +194,7 @@ describe("MongoSetupContext", () => {
         it("Set value is returned", () => {
             validContext.collection = {
                 text : "test"
-            }
+            };
 
             expect(validContext.collection.text).to.be.equal("test");
         });
