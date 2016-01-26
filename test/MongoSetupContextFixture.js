@@ -5,6 +5,13 @@ let expect = require('chai').expect;
 
 let MongoSetupContext = require('../lib/MongoSetupContext.js');
 
+let validContext = new MongoSetupContext({
+    connectionString : "test",
+    db : {
+        close : () => {}
+    }
+});
+
 describe("MongoSetupContext", () => {
     describe("constructor", () => {
         it("Can not be called with undefined", () => {
@@ -137,6 +144,59 @@ describe("MongoSetupContext", () => {
     });
 
     describe("createPass", () => {
-        it()
+        it("Given string correctly formatted", () => {
+            let formattedMessage = validContext.createPass("test message");
+
+            expect(formattedMessage).to.be.equal("\t\u001b[32m✔\u001b[39m  test message");
+        });
+
+        it("Empty string correctly formatted", () => {
+            let formattedMessage = validContext.createPass("");
+
+            expect(formattedMessage).to.be.equal("\t\u001b[32m✔\u001b[39m  ");
+        });
+
+        it("Undefined correctly formatted", () => {
+            let formattedMessage = validContext.createPass(undefined);
+
+            expect(formattedMessage).to.be.equal("\t\u001b[32m✔\u001b[39m  undefined");
+        });
+    });
+
+    describe("createFail", () => {
+        it("Given string correctly formatted", () => {
+            let formattedMessage = validContext.createFail("test message");
+
+            expect(formattedMessage).to.be.equal("\t\u001b[31m✘\u001b[39m  test message");
+        });
+
+        it("Empty string correctly formatted", () => {
+            let formattedMessage = validContext.createFail("");
+
+            expect(formattedMessage).to.be.equal("\t\u001b[31m✘\u001b[39m  ");
+        });
+
+        it("Undefined correctly formatted", () => {
+            let formattedMessage = validContext.createFail(undefined);
+
+            expect(formattedMessage).to.be.equal("\t\u001b[31m✘\u001b[39m  undefined");
+        });
+    });
+
+    describe("collection", () => {
+        it("Value can not be undefined", () => {
+            assert.throws(
+                () => validContext.collection = undefined,
+                "Database collection must be defined"
+            )
+        });
+
+        it("Set value is returned", () => {
+            validContext.collection = {
+                text : "test"
+            }
+
+            expect(validContext.collection.text).to.be.equal("test");
+        });
     });
 });
