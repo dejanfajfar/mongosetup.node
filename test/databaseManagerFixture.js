@@ -81,27 +81,18 @@ describe("databaseManager", () => {
                 "connectTo can not be invoked using undefined");
         });
 
-        it("Starts the promise chain with correct data", () => {
+        it("Starts the promise chain", () => {
             connectStub.yields(undefined, {});
             let connectToPromise = mongo_setup.connectTo(validConnectionData);
 
             return expect(connectToPromise).to.eventually.be.fulfilled;
-
-            //mongo_setup.connectTo(validConnectionData).then(context => {
-            //    expect(context).to.be.undefined;
-            //    expect(context.connectionString).to.be.equal("test_connection_string");
-            //    expect(context.db).to.not.be.undefined;
-            //});
         });
 
         it("In case of connection error breaks the promise chain", () => {
+            connectStub.yields(new Error(), undefined);
+            let connectToPromise = mongo_setup.connectTo(validConnectionData);
 
-
-            mongo_setup.connectTo(validConnectionData).catch(reason => {
-                expect(reason).to.not.be.undefined;
-                expect(readon).to.be.an.instanceOf(Error);
-                expect(reason.message).to.be.empty;
-            });
+            return expect(connectToPromise).to.eventually.be.rejected;
         });
     });
 
