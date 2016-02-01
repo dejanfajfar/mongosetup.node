@@ -20,42 +20,43 @@ var validConnectionData = {
 
 describe("databaseManager", () => {
 
+    let connectStub = sinon.stub();
+
+    before(() => {
+
+        mockery.registerAllowables(
+            [
+                'path',
+                'mocha',
+                'check-types',
+                'chalk',
+                'escape-string-regexp',
+                'ansi-styles',
+                'strip-ansi',
+                'ansi-regex',
+                'supports-color',
+                '../lib/databaseManager.js',
+                './MongoSetupContext.js',
+                'has-ansi'
+            ]);
+
+        mockery.registerMock('mongodb', {
+            MongoClient : {
+                connect : connectStub
+            }
+        });
+
+        mockery.enable();
+
+        mongo_setup = require('../lib/databaseManager.js');
+    });
+
+    after(() => {
+        mockery.disable();
+    });
+
+
     describe("connectTo", () => {
-
-        let connectStub = sinon.stub();
-
-        before(() => {
-
-            mockery.registerAllowables(
-                [
-                    'path',
-                    'mocha',
-                    'check-types',
-                    'chalk',
-                    'escape-string-regexp',
-                    'ansi-styles',
-                    'strip-ansi',
-                    'ansi-regex',
-                    'supports-color',
-                    '../lib/databaseManager.js',
-                    './MongoSetupContext.js',
-                    'has-ansi'
-                ]);
-
-            mockery.registerMock('mongodb', {
-                MongoClient : {
-                    connect : connectStub
-                    }
-            });
-
-            mockery.enable();
-
-            mongo_setup = require('../lib/databaseManager.js');
-        });
-
-        after(() => {
-            mockery.disable();
-        });
 
         it("connectionData must be an object", () => {
             assert.doesNotThrow(() => { mongo_setup.connectTo({
@@ -83,6 +84,7 @@ describe("databaseManager", () => {
 
         it("Starts the promise chain", () => {
             connectStub.yields(undefined, {});
+
             let connectToPromise = mongo_setup.connectTo(validConnectionData);
 
             return expect(connectToPromise).to.eventually.be.fulfilled;
@@ -99,8 +101,38 @@ describe("databaseManager", () => {
     describe("handleError", () => {
         it("If only Error given then prints to the error stream", () => {
 
-            Promise.reject(new Error("Test Error")).catch(mongo_setup.handleError());
-        })
+            return expect(Promise.reject(new Error("Test"))
+                .catch(mongo_setup.handleError()))
+                .to.eventually.satisfy(() => true);
+        });
 
+        it("If context and error given then DB connection closed", () => {
+            let reason = {
+                context: {
+                    closeConnection: sinon.spy(),
+                    log: sinon.spy()
+                },
+                error: new Error("Test error")
+            };
+
+            return expect(Promise.reject(reason)
+                .catch(mongo_setup.handleError()))
+                .to.eventually.satisfy(() => reason.context.closeConnection.calledOnce);
+        });
+
+
+        it("If context and error given then error logged to console", () => {
+            let reason = {
+                context: {
+                    closeConnection: sinon.spy(),
+                    log: sinon.spy()
+                },
+                error: new Error("Test error")
+            };
+
+            return expect(Promise.reject(reason)
+                .catch(mongo_setup.handleError()))
+                .to.eventually.satisfy(() => reason.context.log.calledOnce);
+        });
     });
 });
