@@ -15,7 +15,8 @@ var mockery = require('mockery');
 var mongo_setup;
 
 var validConnectionData = {
-    connectionString : "test_connection_string"
+    connectionString : "test_connection_string",
+    logCallback: (message) => {}
 };
 
 describe("databaseManager", () => {
