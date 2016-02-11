@@ -31,7 +31,6 @@ describe("Collection manager", () => {
         collection_deleteAllDocuments_stub = sinon.stub();
         collection_createIndex_stub = sinon.stub();
 
-
         validContext = new MongoSetupContext({
             connectionString : "test",
             logCallback: (message) => {},
@@ -45,7 +44,7 @@ describe("Collection manager", () => {
             insertOne: collection_insertOne_stub,
             insertMany: collection_insertMany_stub,
             deleteMany: collection_deleteAllDocuments_stub,
-            createIndex: collection_createIndex_stub
+            createIndex: collection_createIndex_stub,
         };
     });
 
@@ -206,6 +205,44 @@ describe("Collection manager", () => {
                 Promise.resolve(validContext)
                     .then(cm.deleteAllDocuments())
             ).to.eventually.satisfy(() => validContext.collection.deleteMany.calledWith({}));
+        });
+    });
+
+    describe("deleteMatching", () => {
+        it("If error thrown then the promise chain is broken", () => {
+            collection_deleteAllDocuments_stub.yields(new Error(), undefined);
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.deleteMatching({}))
+            ).to.eventually.be.rejected;
+        });
+
+        it("On success the promise chain is continued", () => {
+            collection_deleteAllDocuments_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.deleteMatching({id : 1}))
+            ).to.eventually.be.fulfilled;
+        });
+
+        it("Expect the collection deleteMany method to be called exactly once", () => {
+            collection_deleteAllDocuments_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.deleteMatching({id : 1}))
+            ).to.eventually.satisfy(() => validContext.collection.deleteMany.calledOnce);
+        });
+
+        it("Expect the collection deleteMany method to be called with provided filter", () => {
+            collection_deleteAllDocuments_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.deleteMatching({id : 1}))
+            ).to.eventually.satisfy(() => validContext.collection.deleteMany.calledWith({id : 1}));
         });
     });
 
