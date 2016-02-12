@@ -11,11 +11,11 @@ A nodeJs module to write promises based __mongodb__ initialization/update script
 
 # Why?
 
-To create a easy way to initialize your mongodb from scratch. 
- 
-Create __collections__, __indexes__ and insert initialization data with an easy _fluent_ interface.
+Because __I__ believe that your application should concentrate on business logic and not how to setup and manage its data store.
 
-If the shiny fluent interface did not convince you then another great point in favor is the ability to run scripts __without a local mongo installation__.
+Because __you__ can easily create complext DB initialization procedures that can be used on multiple instances. 
+
+If the shiny promise based interface did not convince you then another great point in favor is the ability to run scripts __without a local mongodb installation__.
 
 # How?
 

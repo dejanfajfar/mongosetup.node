@@ -1,4 +1,4 @@
-var mongoSetup = require('./index.js');
+var mongoSetup = require('./../index.js');
 var cp = mongoSetup.collectionPromises;
 
 var connectionData = {
