@@ -13,3 +13,9 @@ Demonstrates how to create an empty collection on the connected DB
 > create_index.js
 
 Creates a simple index on the selected collection
+
+## Create empty collection with options
+
+> create_collection_options.js
+
+Creates a empty collection with the provided options

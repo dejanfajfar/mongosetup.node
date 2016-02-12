@@ -14,6 +14,7 @@ let MongoSetupContext = require('../lib/MongoSetupContext.js');
 let cm;
 let validContext;
 let db_collection_stub;
+let db_createCollection_stub;
 let collection_insertOne_stub;
 let collection_insertMany_stub;
 let collection_deleteAllDocuments_stub;
@@ -30,13 +31,15 @@ describe("Collection manager", () => {
         collection_insertMany_stub = sinon.stub();
         collection_deleteAllDocuments_stub = sinon.stub();
         collection_createIndex_stub = sinon.stub();
+        db_createCollection_stub = sinon.stub();
 
         validContext = new MongoSetupContext({
             connectionString : "test",
             logCallback: (message) => {},
             db : {
                 close : () => {},
-                collection : db_collection_stub
+                collection : db_collection_stub,
+                createCollection : db_createCollection_stub
             }
         });
 
@@ -44,7 +47,7 @@ describe("Collection manager", () => {
             insertOne: collection_insertOne_stub,
             insertMany: collection_insertMany_stub,
             deleteMany: collection_deleteAllDocuments_stub,
-            createIndex: collection_createIndex_stub,
+            createIndex: collection_createIndex_stub
         };
     });
 
@@ -85,6 +88,55 @@ describe("Collection manager", () => {
                 Promise.resolve(validContext)
                     .then(cm.useCollection("TestCollection"))
             ).to.eventually.have.property('collectionName', "TestCollection");
+        });
+    });
+
+    describe("createCollection", () => {
+        it("If error thrown then the promise chain is broken", () => {
+            db_createCollection_stub.yields(new Error(), undefined);
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", {}))
+            ).to.eventually.be.rejected;
+        });
+
+        it("On success the promise chain is continued", () => {
+            db_createCollection_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", {}))
+            ).to.eventually.be.fulfilled;
+        });
+
+        it("On success the collection name is set on the context", () => {
+            db_createCollection_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", {}))
+            ).to.eventually.have.property('collectionName', "TestCollection");
+        });
+
+        it("If another collection was already selected then that collection is overridden", () => {
+            db_createCollection_stub.yields(undefined, {});
+            let testContext = validContext;
+            testContext.db.collectionName = "AnotherCollection";
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", {}))
+            ).to.eventually.have.property('collectionName', "TestCollection");
+        });
+
+        it("Correct collection initialization options passed to underlying db connection", () => {
+            db_createCollection_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", {capped : false}))
+            ).to.eventually.satisfy(() => db_createCollection_stub.calledWith("TestCollection", {capped : false}));
         });
     });
 
