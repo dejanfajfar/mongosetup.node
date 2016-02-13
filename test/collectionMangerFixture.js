@@ -52,6 +52,20 @@ describe("Collection manager", () => {
     });
 
     describe("useCollection", () => {
+        it("Given empty collection name then promise chain is broken", () =>{
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.useCollection(""))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given undefined collection name then promise chain is broken", () =>{
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.useCollection(undefined))
+            ).to.eventually.be.rejected;
+        });
+
         it("If error thrown then the promise chain is broken", () => {
             db_collection_stub.yields(new Error(), undefined);
 
