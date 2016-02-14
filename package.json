@@ -17,7 +17,9 @@
     "mongodb",
     "cli",
     "shell",
-    "tool"
+    "tool",
+    "setup",
+    "standalone"
   ],
   "author": "Dejan Fajfar <dejan@fajfar.com>",
   "license": "ISC",
