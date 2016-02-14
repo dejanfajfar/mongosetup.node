@@ -46,9 +46,11 @@ Using the fluent interface we can create easy to __read__ and __maintain__ initi
 
 # Where to next?
 
-Need more information? Refer to [our wiki](https://github.com/dejanfajfar/mongosetup.node/wiki)
+__What a quick scoop of the most common usage scenarios?__ Have a look at [our samples here](https://github.com/dejanfajfar/mongosetup.node/tree/master/examples)
 
-Found something lacking? Write a bug to [our bug tracker](https://github.com/dejanfajfar/mongosetup.node/issues)
+__Need more information?__ Refer to [our wiki](https://github.com/dejanfajfar/mongosetup.node/wiki)
+
+__Found something lacking?__ Write a bug to [our bug tracker](https://github.com/dejanfajfar/mongosetup.node/issues)
 
 ---
 
