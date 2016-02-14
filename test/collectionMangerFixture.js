@@ -106,6 +106,34 @@ describe("Collection manager", () => {
     });
 
     describe("createCollection", () => {
+        it("Given empty collection name then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("", {}))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given undefined collection name then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection(undefined, {}))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given undefined collection creation options then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", undefined))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given that the collection creation options is not an object the creation chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createCollection("TestCollection", 24))
+            ).to.eventually.be.rejected;
+        });
+
         it("If error thrown then the promise chain is broken", () => {
             db_createCollection_stub.yields(new Error(), undefined);
 
