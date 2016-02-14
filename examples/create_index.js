@@ -7,6 +7,6 @@ var connectionData = {
 
 mongoSetup.connectTo(connectionData)
     .then(cp.useCollection("MyCollection"))
-    .then(cp.createIndex())
     .then(cp.createIndex({name : 1}, {name : "name_index"}))
+    .then(cp.disconnect())
     .catch(mongoSetup.handleError());
