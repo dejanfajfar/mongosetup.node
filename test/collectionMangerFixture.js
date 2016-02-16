@@ -183,6 +183,13 @@ describe("Collection manager", () => {
     });
 
     describe("insertOne", () => {
+        it("Given an undefined document to insert then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.insertOne(undefined))
+            ).to.eventually.be.rejected;
+        });
+
         it("If error thrown then the promise chain is broken", () => {
             collection_insertOne_stub.yields(new Error(), undefined);
 
@@ -224,6 +231,20 @@ describe("Collection manager", () => {
     });
 
     describe("insertMany", () => {
+        it("Given an undefined document array the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.insertMany(undefined))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given an non array document then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.insertMany(42))
+            ).to.eventually.be.rejected;
+        });
+
         it("If error thrown then the promise chain is broken", () => {
             collection_insertMany_stub.yields(new Error(), undefined);
 
@@ -303,6 +324,20 @@ describe("Collection manager", () => {
     });
 
     describe("deleteMatching", () => {
+        it("Given an undefined where clause then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.deleteMatching(undefined))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given an non object where clause then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.deleteMatching(42))
+            ).to.eventually.be.rejected;
+        });
+
         it("If error thrown then the promise chain is broken", () => {
             collection_deleteAllDocuments_stub.yields(new Error(), undefined);
 
