@@ -126,14 +126,15 @@ describe("databaseManager", () => {
             let reason = {
                 context: {
                     closeConnection: sinon.spy(),
-                    log: sinon.spy()
+                    log: sinon.spy(),
+                    createFail: sinon.spy()
                 },
                 error: new Error("Test error")
             };
 
             return expect(Promise.reject(reason)
                 .catch(mongo_setup.handleError()))
-                .to.eventually.satisfy(() => reason.context.log.calledOnce);
+                .to.eventually.satisfy(() => reason.context.log.calledTwice);
         });
     });
 });
