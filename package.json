@@ -37,6 +37,7 @@
     "chai-as-promised": "^5.2.0",
     "mocha": "^2.3.4",
     "mockery": "^1.4.0",
-    "sinon": "^1.17.3"
+    "sinon": "^1.17.3",
+    "sinon-as-promised": "^4.0.0"
   }
 }

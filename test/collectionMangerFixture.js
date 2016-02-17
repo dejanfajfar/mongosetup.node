@@ -8,6 +8,7 @@ chai.use(chaiAsPromised);
 var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
+require('sinon-as-promised');
 var mockery = require('mockery');
 
 let MongoSetupContext = require('../lib/MongoSetupContext.js');
@@ -19,6 +20,7 @@ let collection_insertOne_stub;
 let collection_insertMany_stub;
 let collection_deleteAllDocuments_stub;
 let collection_createIndex_stub;
+let collection_dropIndex_stub;
 
 describe("Collection manager", () => {
 
@@ -32,6 +34,7 @@ describe("Collection manager", () => {
         collection_deleteAllDocuments_stub = sinon.stub();
         collection_createIndex_stub = sinon.stub();
         db_createCollection_stub = sinon.stub();
+        collection_dropIndex_stub = sinon.stub();
 
         validContext = new MongoSetupContext({
             connectionString : "test",
@@ -47,7 +50,8 @@ describe("Collection manager", () => {
             insertOne: collection_insertOne_stub,
             insertMany: collection_insertMany_stub,
             deleteMany: collection_deleteAllDocuments_stub,
-            createIndex: collection_createIndex_stub
+            createIndex: collection_createIndex_stub,
+            dropIndex: collection_dropIndex_stub
         };
     });
 
@@ -431,4 +435,56 @@ describe("Collection manager", () => {
             ).to.eventually.satisfy(() => validContext.collection.createIndex.calledOnce);
         });
     });
+
+    describe("dropIndex", () => {
+        it("Given an undefined index name then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropIndex(undefined))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given an empty index name then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropIndex(""))
+            ).to.eventually.be.rejected;
+        });
+
+        it("If error thrown then promise chain is broken", () => {
+            collection_dropIndex_stub.yields(new Error(), undefined);
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropIndex("testIndex"))
+            ).to.eventually.be.rejected;
+        });
+
+        it("On success the promise chain is continued", () => {
+            collection_dropIndex_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropIndex("testIndex"))
+            ).to.eventually.be.fullfiled;
+        });
+
+        it("Expect the collections dropIndex to be called exactly once", () => {
+            collection_dropIndex_stub = collection_dropIndex_stub.resolves({});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropIndex("testIndex"))
+            ).to.eventually.satisfy(() => validContext.collection.dropIndex.calledOnce);
+        });
+
+        it("Expect the collections dropIndex to be called with correct index name", () => {
+            collection_dropIndex_stub = collection_dropIndex_stub.resolves({});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropIndex("testIndex"))
+            ).to.eventually.satisfy(() => validContext.collection.dropIndex.calledWith("testIndex"));
+        });
+    })
 });
