@@ -376,6 +376,34 @@ describe("Collection manager", () => {
     });
 
     describe("createIndex", () => {
+        it("Given undefined field definitions then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createIndex(undefined, {}))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given a non object field definition then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createIndex(42, {}))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given undefined index options then the promise chain is broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createIndex({}, undefined))
+            ).to.eventually.be.rejected;
+        });
+
+        it("Given non object index options then the promise chain si broken", () => {
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.createIndex({}, 42))
+            ).to.eventually.be.rejected;
+        });
+
         it("If error thrown then the promise chain is broken", () => {
             collection_createIndex_stub.yields(new Error(), undefined);
 
