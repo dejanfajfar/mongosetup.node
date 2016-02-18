@@ -63,11 +63,31 @@ describe("Collection manager", () => {
             ).to.eventually.be.rejected;
         });
 
+        it("Given an empty collection name then the correct error is thrown", () => {
+            return Promise.resolve(validContext)
+                .then(cm.useCollection(""))
+                .catch(err => {
+                    expect(err).not.be.undefined;
+                    expect(err).to.have.property("error");
+                    expect(err.error).to.have.property("message", "The collection name must be provided");
+                });
+        });
+
         it("Given undefined collection name then promise chain is broken", () =>{
             return expect(
                 Promise.resolve(validContext)
                     .then(cm.useCollection(undefined))
             ).to.eventually.be.rejected;
+        });
+
+        it("Given an undefined collection name then the correct error is thrown", () => {
+            return Promise.resolve(validContext)
+                .then(cm.useCollection(undefined))
+                .catch(err => {
+                    expect(err).not.be.undefined;
+                    expect(err).to.have.property("error");
+                    expect(err.error).to.have.property("message", "The collection name can not be undefined");
+                });
         });
 
         it("If error thrown then the promise chain is broken", () => {
