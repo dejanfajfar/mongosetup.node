@@ -56,13 +56,6 @@ describe("Collection manager", () => {
     });
 
     describe("useCollection", () => {
-        it("Given empty collection name then promise chain is broken", () =>{
-            return expect(
-                Promise.resolve(validContext)
-                    .then(cm.useCollection(""))
-            ).to.eventually.be.rejected;
-        });
-
         it("Given an empty collection name then the correct error is thrown", () => {
             return Promise.resolve(validContext)
                 .then(cm.useCollection(""))
@@ -71,13 +64,6 @@ describe("Collection manager", () => {
                     expect(err).to.have.property("error");
                     expect(err.error).to.have.property("message", "The collection name must be provided");
                 });
-        });
-
-        it("Given undefined collection name then promise chain is broken", () =>{
-            return expect(
-                Promise.resolve(validContext)
-                    .then(cm.useCollection(undefined))
-            ).to.eventually.be.rejected;
         });
 
         it("Given an undefined collection name then the correct error is thrown", () => {
@@ -130,32 +116,44 @@ describe("Collection manager", () => {
     });
 
     describe("createCollection", () => {
-        it("Given empty collection name then the promise chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given empty collection name then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection("", {}))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection name must be provided");
+                    });
         });
 
-        it("Given undefined collection name then the promise chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given undefined collection name then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection(undefined, {}))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection name can not be undefined");
+                    });
         });
 
-        it("Given undefined collection creation options then the promise chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given undefined collection creation options then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection("TestCollection", undefined))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection options can not be undefined");
+                    });
         });
 
-        it("Given that the collection creation options is not an object the creation chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given that the collection creation options is not an object the creation chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection("TestCollection", 24))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection options must be a object");
+                    });
         });
 
         it("If error thrown then the promise chain is broken", () => {
