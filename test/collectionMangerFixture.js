@@ -15,6 +15,7 @@ let cm;
 let validContext;
 let db_collection_stub;
 let db_createCollection_stub;
+let db_command_stub;
 let collection_insertOne_stub;
 let collection_insertMany_stub;
 let collection_deleteAllDocuments_stub;
@@ -34,6 +35,7 @@ describe("Collection manager", () => {
         collection_createIndex_stub = sinon.stub();
         db_createCollection_stub = sinon.stub();
         collection_dropIndex_stub = sinon.stub();
+        db_command_stub = sinon.stub();
 
         validContext = new MongoSetupContext({
             connectionString : "test",
@@ -41,7 +43,8 @@ describe("Collection manager", () => {
             db : {
                 close : () => {},
                 collection : db_collection_stub,
-                createCollection : db_createCollection_stub
+                createCollection : db_createCollection_stub,
+                command : db_command_stub
             }
         });
 
@@ -503,5 +506,34 @@ describe("Collection manager", () => {
                     .then(cm.dropIndex("testIndex"))
             ).to.eventually.satisfy(() => validContext.collection.dropIndex.calledWith("testIndex"));
         });
-    })
+    });
+
+    describe("repair", () => {
+        it("On Error thrown then promise chain is broken", () => {
+            db_command_stub.yields(new Error(), undefined);
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.repair())
+            ).to.eventually.be.rejected;
+        });
+
+        it("On Success the promise chain is continued", () => {
+            db_command_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.repair())
+            ).to.eventually.be.fullfiled;
+        });
+
+        it("Expect the db command to be called exactly once", () => {
+            db_command_stub = db_command_stub.resolves({});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.repair())
+            ).to.eventually.satisfy(() => validContext.db.command.calledOnce);
+        });
+    });
 });
