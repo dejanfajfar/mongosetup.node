@@ -5,7 +5,6 @@ var chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);
 
-var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
 require('sinon-as-promised');
@@ -16,6 +15,7 @@ let cm;
 let validContext;
 let db_collection_stub;
 let db_createCollection_stub;
+let db_command_stub;
 let collection_insertOne_stub;
 let collection_insertMany_stub;
 let collection_deleteAllDocuments_stub;
@@ -35,6 +35,7 @@ describe("Collection manager", () => {
         collection_createIndex_stub = sinon.stub();
         db_createCollection_stub = sinon.stub();
         collection_dropIndex_stub = sinon.stub();
+        db_command_stub = sinon.stub();
 
         validContext = new MongoSetupContext({
             connectionString : "test",
@@ -42,7 +43,8 @@ describe("Collection manager", () => {
             db : {
                 close : () => {},
                 collection : db_collection_stub,
-                createCollection : db_createCollection_stub
+                createCollection : db_createCollection_stub,
+                command : db_command_stub
             }
         });
 
@@ -56,18 +58,24 @@ describe("Collection manager", () => {
     });
 
     describe("useCollection", () => {
-        it("Given empty collection name then promise chain is broken", () =>{
-            return expect(
-                Promise.resolve(validContext)
-                    .then(cm.useCollection(""))
-            ).to.eventually.be.rejected;
+        it("Given an empty collection name then the correct error is thrown", () => {
+            return Promise.resolve(validContext)
+                .then(cm.useCollection(""))
+                .catch(err => {
+                    expect(err).not.be.undefined;
+                    expect(err).to.have.property("error");
+                    expect(err.error).to.have.property("message", "The collection name must be provided");
+                });
         });
 
-        it("Given undefined collection name then promise chain is broken", () =>{
-            return expect(
-                Promise.resolve(validContext)
-                    .then(cm.useCollection(undefined))
-            ).to.eventually.be.rejected;
+        it("Given an undefined collection name then the correct error is thrown", () => {
+            return Promise.resolve(validContext)
+                .then(cm.useCollection(undefined))
+                .catch(err => {
+                    expect(err).not.be.undefined;
+                    expect(err).to.have.property("error");
+                    expect(err.error).to.have.property("message", "The collection name can not be undefined");
+                });
         });
 
         it("If error thrown then the promise chain is broken", () => {
@@ -110,32 +118,44 @@ describe("Collection manager", () => {
     });
 
     describe("createCollection", () => {
-        it("Given empty collection name then the promise chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given empty collection name then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection("", {}))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection name must be provided");
+                    });
         });
 
-        it("Given undefined collection name then the promise chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given undefined collection name then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection(undefined, {}))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection name can not be undefined");
+                    });
         });
 
-        it("Given undefined collection creation options then the promise chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given undefined collection creation options then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection("TestCollection", undefined))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection options can not be undefined");
+                    });
         });
 
-        it("Given that the collection creation options is not an object the creation chain is broken", () => {
-            return expect(
-                Promise.resolve(validContext)
+        it("Given that the collection creation options is not an object the creation chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
                     .then(cm.createCollection("TestCollection", 24))
-            ).to.eventually.be.rejected;
+                    .catch(err => {
+                        expect(err).not.be.undefined;
+                        expect(err).to.have.property("error");
+                        expect(err.error).to.have.property("message", "The collection options must be a object");
+                    });
         });
 
         it("If error thrown then the promise chain is broken", () => {
@@ -486,5 +506,34 @@ describe("Collection manager", () => {
                     .then(cm.dropIndex("testIndex"))
             ).to.eventually.satisfy(() => validContext.collection.dropIndex.calledWith("testIndex"));
         });
-    })
+    });
+
+    describe("repair", () => {
+        it("On Error thrown then promise chain is broken", () => {
+            db_command_stub.yields(new Error(), undefined);
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.repair())
+            ).to.eventually.be.rejected;
+        });
+
+        it("On Success the promise chain is continued", () => {
+            db_command_stub.yields(undefined, {});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.repair())
+            ).to.eventually.be.fullfiled;
+        });
+
+        it("Expect the db command to be called exactly once", () => {
+            db_command_stub = db_command_stub.resolves({});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.repair())
+            ).to.eventually.satisfy(() => validContext.db.command.calledOnce);
+        });
+    });
 });
