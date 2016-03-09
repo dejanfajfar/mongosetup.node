@@ -26,3 +26,8 @@ Demonstrates how to create a capped collection with a limited amount of items al
 
 Demonstrates how to remove existing indexes from a given collection
 
+## Repair database
+
+> node repair_database.js
+
+Rebuilds all indexes and releases allocated HDD space after deleting documents from a collection
