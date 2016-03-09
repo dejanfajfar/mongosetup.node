@@ -1,6 +1,6 @@
 {
   "name": "mongosetup",
-  "version": "0.5.1",
+  "version": "0.1.1",
   "description": "A promise based mongo db initialization library",
   "main": "index.js",
   "scripts": {

@@ -1,7 +1,5 @@
 language: node_js
 node_js:
-  - "4.0"
-  - "4.1"
   - "4"
   - "5.0"
   - "5.4"
@@ -12,7 +10,7 @@ before_install:
   - git config --global user.email "you@example.com"
   - git config --global user.name "travisbuild"
 before_script:
-  - npm version 0.5.$TRAVIS_BUILD_NUMBER
+  - npm version 0.9.1
 deploy:
   provider: npm
   email: "dejan@fajfar.com"
