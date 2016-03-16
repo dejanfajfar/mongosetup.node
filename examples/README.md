@@ -31,3 +31,11 @@ Demonstrates how to remove existing indexes from a given collection
 > node repair_database.js
 
 Rebuilds all indexes and releases allocated HDD space after deleting documents from a collection
+
+## Drop collection
+
+> node drop_collection.js
+
+Removes the my_collection collection from the databse
+
+The __my_collection__ collection must already be present in the DB before running the example
