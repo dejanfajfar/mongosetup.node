@@ -16,6 +16,7 @@ let validContext;
 let db_collection_stub;
 let db_createCollection_stub;
 let db_command_stub;
+let db_dropCollection_stub;
 let collection_insertOne_stub;
 let collection_insertMany_stub;
 let collection_deleteAllDocuments_stub;
@@ -36,6 +37,7 @@ describe("Collection manager", () => {
         db_createCollection_stub = sinon.stub();
         collection_dropIndex_stub = sinon.stub();
         db_command_stub = sinon.stub();
+        db_dropCollection_stub = sinon.stub();
 
         validContext = new MongoSetupContext({
             connectionString : "test",
@@ -44,7 +46,8 @@ describe("Collection manager", () => {
                 close : () => {},
                 collection : db_collection_stub,
                 createCollection : db_createCollection_stub,
-                command : db_command_stub
+                command : db_command_stub,
+                dropCollection : db_dropCollection_stub
             }
         });
 
@@ -203,6 +206,79 @@ describe("Collection manager", () => {
                 Promise.resolve(validContext)
                     .then(cm.createCollection("TestCollection", {capped : false}))
             ).to.eventually.satisfy(() => db_createCollection_stub.calledWith("TestCollection", {capped : false}));
+        });
+    });
+
+    describe("dropCollection", () => {
+        it("Given empty collection name then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
+                .then(cm.dropCollection(""))
+                .catch(err => {
+                    expect(err).not.be.undefined;
+                    expect(err).to.have.property("error");
+                    expect(err.error).to.have.property("message", "The collection name must be provided");
+                });
+        });
+
+        it("Given undefined collection name then the promise chain is broken with correct exception", () => {
+            return Promise.resolve(validContext)
+                .then(cm.dropCollection(undefined))
+                .catch(err => {
+                    expect(err).not.be.undefined;
+                    expect(err).to.have.property("error");
+                    expect(err.error).to.have.property("message", "The collection name can not be undefined");
+                });
+        });
+
+        it("If error thrown then the promise chain is broken", () => {
+            db_dropCollection_stub.yields(new Error(), undefined);
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropCollection("TestCollection"))
+            ).to.eventually.be.rejected;
+        });
+
+        it("On success the promise chain is continued", () => {
+            db_dropCollection_stub.resolves({});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropCollection("TestCollection"))
+            ).to.eventually.be.fulfilled;
+        });
+
+        it("If set collection is removed then the collection name is removed from the context", () => {
+            db_dropCollection_stub.resolves({});
+
+            validContext.collection = {};
+            validContext.collectionName = "TestCollection";
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropCollection("TestCollection"))
+            ).to.eventually.have.property('collectionName', undefined);
+        });
+
+        it("If set collection is removed then the collection reference is removed from the context", () => {
+            db_dropCollection_stub.resolves({});
+
+            validContext.collection = {};
+            validContext.collectionName = "TestCollection";
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropCollection("TestCollection"))
+            ).to.eventually.have.property('collection', undefined);
+        });
+
+        it("If not set collection is removed then any existing collection association is left in the context", () => {
+            db_dropCollection_stub.resolves({});
+
+            return expect(
+                Promise.resolve(validContext)
+                    .then(cm.dropCollection("TestCollection"))
+            ).to.eventually.not.have.property('collectionName');
         });
     });
 
