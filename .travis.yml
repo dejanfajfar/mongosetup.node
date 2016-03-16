@@ -10,7 +10,7 @@ before_install:
   - git config --global user.email "you@example.com"
   - git config --global user.name "travisbuild"
 before_script:
-  - npm version 0.9.1
+  - npm version 0.9.2
 deploy:
   provider: npm
   email: "dejan@fajfar.com"
