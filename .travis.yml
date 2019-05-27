@@ -1,16 +1,14 @@
 language: node_js
 node_js:
-  - "4"
-  - "5.0"
-  - "5.4"
-  - "5"
+  - "8"
+  - "10"
 services:
   - mongodb
 before_install:
   - git config --global user.email "you@example.com"
   - git config --global user.name "travisbuild"
 before_script:
-  - npm version 0.9.2
+  - npm version 0.9.3
 deploy:
   provider: npm
   email: "dejan@fajfar.com"

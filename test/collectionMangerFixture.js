@@ -7,7 +7,6 @@ chai.use(chaiAsPromised);
 
 var expect = chai.expect;
 var sinon = require('sinon');
-require('sinon-as-promised');
 var mockery = require('mockery');
 
 let MongoSetupContext = require('../lib/MongoSetupContext.js');
@@ -557,12 +556,12 @@ describe("Collection manager", () => {
         });
 
         it("On success the promise chain is continued", () => {
-            collection_dropIndex_stub.yields(undefined, {});
+            collection_dropIndex_stub.resolves({});
 
             return expect(
                 Promise.resolve(validContext)
                     .then(cm.dropIndex("testIndex"))
-            ).to.eventually.be.fullfiled;
+            ).to.eventually.be.fulfilled;
         });
 
         it("Expect the collections dropIndex to be called exactly once", () => {
@@ -595,12 +594,12 @@ describe("Collection manager", () => {
         });
 
         it("On Success the promise chain is continued", () => {
-            db_command_stub.yields(undefined, {});
+            db_command_stub.resolves({});
 
             return expect(
                 Promise.resolve(validContext)
                     .then(cm.repair())
-            ).to.eventually.be.fullfiled;
+            ).to.eventually.be.fulfilled;
         });
 
         it("Expect the db command to be called exactly once", () => {

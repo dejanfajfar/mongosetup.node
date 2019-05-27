@@ -4,6 +4,7 @@
   "description": "A promise based mongo db initialization library",
   "main": "index.js",
   "scripts": {
+    "mocha": "mocha",
     "test": "mocha"
   },
   "repository": {
@@ -28,16 +29,15 @@
   },
   "homepage": "https://github.com/dejanfajfar/mongosetup.node#readme",
   "dependencies": {
-    "chalk": "^1.1.1",
-    "check-types": "^7.0.0",
-    "mongodb": "^2.1.4"
+    "chalk": "^2.4.2",
+    "check-types": "^8.0.3",
+    "mongodb": "^3.2.6"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "chai-as-promised": "^5.2.0",
-    "mocha": "^2.3.4",
-    "mockery": "^1.4.0",
-    "sinon": "^1.17.3",
-    "sinon-as-promised": "^4.0.0"
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^6.1.4",
+    "mockery": "^2.1.0",
+    "sinon": "^7.3.2"
   }
 }
